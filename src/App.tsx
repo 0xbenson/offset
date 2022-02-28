@@ -1,5 +1,5 @@
 import './App.css';
-import React, {useState} from 'react';
+import React, {useState, useEffect } from 'react';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { Result } from 'ethers/lib/utils';
@@ -7,11 +7,10 @@ import { Result } from 'ethers/lib/utils';
 //assets
 import KLIMAlogo from './assets/logo.png';
 import Arrow from './assets/arrow.png';
-import Fire from './assets/fire.png';
 import BCTlogo from './assets/BCT.png';
 import USDClogo from './assets/USDC.png';
-import PendingApproval from './assets/approving.png';
 import Leaf from './assets/leaf.png';
+import BCTcircle from './assets/BCTcircle.png';
 
 //contracts
 import {sKLIMAcontractAddress,
@@ -34,6 +33,7 @@ import {sKLIMAcontractAddress,
   wsKLIMAcontract,
   BCTcontract,
   USDCcontract,
+  retirementStorageContract,
   web3
 } from './contracts';
 
@@ -44,6 +44,8 @@ import { Sidebar } from './components/Sidebar';
 import { ConversionPanel } from './components/ConversionPanel';
 import { BreakdownCard } from './components/BreakdownCard';
 import { Toast } from './components/Toast';
+import { BurnModal } from './components/burnModal';
+import { ApproveModal } from './components/ApproveModal';
 
 //utils
 import { errorBurn } from './utils/errorBurn';
@@ -72,6 +74,20 @@ function App() {
   const [BCTperUSDC, setBCTperUSDC] = useState(0);
   const [BCTperKLIMA, setBCTperKLIMA] = useState(0);
   const [BCTperWSKLIMA, setBCTperWSKLIMA] = useState(0);
+  const [userRetired, setUserRetired] = useState(0);
+  const [userOffset, setUserOffset] = useState(0);
+  const [width, setWidth] = useState<number>(window.innerWidth);
+
+  function handleWindowSizeChange() {
+    setWidth(window.innerWidth);
+  }
+
+  useEffect(() => {
+      window.addEventListener('resize', handleWindowSizeChange);
+      return () => {
+          window.removeEventListener('resize', handleWindowSizeChange);
+      }
+  }, []);
 
   Promise.allSettled([BCTcontract.methods.balanceOf(BCTklimaPool).call(), KLIMAcontract.methods.balanceOf(BCTklimaPool).call(), BCTcontract.methods.balanceOf(BCTusdcPool).call(), USDCcontract.methods.balanceOf(BCTusdcPool).call(), sKLIMAcontract.methods.index().call()]).then((results: any) => {
     const BCTinKpool = (+results[0].value)*10**-18;
@@ -83,7 +99,6 @@ function App() {
     const klimaIndex = (+results[4].value)*10**-9;
     setBCTperWSKLIMA(KinKpool/(BCTinKpool*klimaIndex))
   }).catch((err:any) => {
-    console.log(err);
   });
   
   function CoinSelectButton() {
@@ -115,17 +130,17 @@ function App() {
         <input
           onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()}
           onChange = {(e) => {
-            (document.getElementById('nbx') as HTMLSpanElement).textContent = (+e.target.value).toFixed(2);
-            (document.getElementById('BCTequivalent') as HTMLSpanElement).textContent = (multiplier*+e.target.value).toFixed(2).toString();
+            (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (+e.target.value).toFixed(2);
+            (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = (multiplier*+e.target.value).toFixed(2).toString();
           }}
           id = 'amount'
           type="number"
           placeholder="How many BCT would you like to retire?"
         />
         <button onClick = {() => {
-          (document.getElementById('amount') as HTMLInputElement).value = currentCoinBalance().toString();
-          (document.getElementById('nbx') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2).toString();
-          (document.getElementById('BCTequivalent') as HTMLSpanElement).textContent = (multiplier*currentCoinBalance()).toFixed(2).toString();
+          (document.getElementById('amount') as HTMLInputElement).value = (currentCoinBalance()/multiplier).toFixed(5);
+          (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (currentCoinBalance()/multiplier).toFixed(2);
+          (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2);
         }}
         className = 'Max'>
         MAX
@@ -144,7 +159,7 @@ function App() {
         const amount = (document.getElementById('amount') as HTMLInputElement).value;
         const beneficiaryAddress = (document.getElementById('beneficiaryAddress') as HTMLInputElement).value;
         const beneficiary = (document.getElementById('beneficiary') as HTMLInputElement).value
-        const retirementMessage = (document.getElementById('retirementMessage') as HTMLInputElement).value;
+        const retirementMessage = (document.getElementById('retirementMessage') as HTMLInputElement).value + ' Retired via KlimaDAO';
         burnCoin(currentCoin, amount, beneficiaryAddress, beneficiary, retirementMessage);
       }
       else {
@@ -216,45 +231,6 @@ function App() {
               </div>
             </button>
           </div>
-        </div>
-      </div>
-    )
-  }
-
-  function ApproveModal() {
-    return (
-      <div onClick = {() => {setCoinModalOpened(false); }} className = 'modalBackground'>
-        <div style = {{textAlign: 'center'}} className = 'modalContainer'>
-          <div style = {{paddingBottom: '20px', width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-            <span style = {{paddingBottom: '60px', fontWeight: '600', fontSize: '20px'}}>Approve</span>
-            <button className = 'modalClose' onClick = {() => setApproveModalOpened(false)}>&times;</button>
-          </div>
-          <div style = {{paddingBottom: '20px', paddingLeft: '85px'}}>
-            <img id = "approvalpic" className = "Approving" src = {PendingApproval} alt = "approving"/>
-          </div>
-          <p id = 'approvingStatus' style = {{margin: 'auto'}}>
-            Approving...
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  function BurnModal() {
-    return (
-      <div onClick = {() => {setBurnModalOpened(false); }} className = 'modalBackground'>
-        <div style = {{textAlign: 'center'}} className = 'modalContainer'>
-          <div style = {{paddingBottom: '20px', width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-            <span style = {{paddingBottom: '60px', fontWeight: '600', fontSize: '20px'}}>Burn</span>
-            <button className = 'modalClose' onClick = {() => setBurnModalOpened(false)}>&times;</button>
-          </div>
-          <div style = {{position: 'relative', paddingBottom: '20px', paddingLeft: '85px'}}>
-            <img id = 'burnSymbol' style = {{paddingLeft: '75px', paddingTop: '68px', position: 'absolute', height: '60px'}} src = {Fire} alt = ""/>
-            <img id = "approvalpic" className = "Approving" src = {PendingApproval} alt = "approving"/>
-          </div>
-          <p id = 'approvingStatus' style = {{margin: 'auto'}}>
-            Burning...
-          </p>
         </div>
       </div>
     )
@@ -358,6 +334,14 @@ function App() {
         }
         setUSDCbalance(res/(10**6));
       });
+
+      retirementStorageContract.methods.getRetirementTotals(accounts[0]).call(function (err: Error, res: any) {
+        if (err) {
+          return;
+        }
+        setUserRetired(res[1]/(10**18));
+        setUserOffset(res[0])
+      });
     }
   }
 
@@ -443,7 +427,6 @@ function App() {
       });
 
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -460,42 +443,44 @@ function App() {
       <div className = "Main">
         <div className = "HeaderPanel">
           <header className = "CardTitle">
-            Carbon Offset (beta)
+            Carbon Offset
           </header>
           {active ? <button onClick={connect} className = "DisconnectButton">DISCONNECT</button> : <button onClick={connect} className = "ConnectButton">CONNECT</button>}
         </div>
-        <div style = {{height: '95%', display: 'flex', justifyContent: 'space-between'}}>
+        <div className = 'MainBody'>
           <div className = 'Card'>
             <p className = 'CardTitle'>Retire Carbon</p>
-            <p className = 'CardSub'>Hold, stake, and compound. If the protocol earns a <br/> profit selling carbon bonds, these rewards are <br/>shared among all holders of sKLIMA.</p>
+            <p className = 'CardSub'>
+              Retire carbon and claim the underlying enviromental<br/>
+              benefit of the carbon offset.<br/>
+            </p>
             <div className = 'BurnPanel'>
               <CoinSelectButton/>
               <RetireAmountInput/>
               <ConversionPanel currentCoin = {currentCoin}/>
               <InputField title = "BENEFICIARY" type = "text" placeholder = "Who is the beneficiary?" id = "beneficiary"/>
-              <InputField title = "BENEFICIARY ADDRESS (optional)" type = "text" placeholder = "What address are you retiring on behalf of?" id = "beneficiaryAddress"/>
+              <InputField title = "BENEFICIARY ADDRESS (optional; defaults to connected address)" type = "text" placeholder = "Which address are you retiring on behalf of?" id = "beneficiaryAddress"/>
               <InputField title = "RETIREMENT MESSAGE (optional)" type = "text" placeholder = "Any additional info for your retirement?" id = "retirementMessage"/>
               <MainPanelButton/>
             </div>
           </div>
-          <div style = {{flexDirection: 'column', display: 'flex', width: '30%'}}>
-            <MiniCard title = "You've Retired" symbol = {Leaf} amount = "8,543" subtitle = "Offsets Retired"/>
-            <MiniCard title = "Community Retired" symbol = {Leaf} amount = "478K" subtitle = "Total Offsets Retired"/>
-            <BreakdownCard/>
+          <div className = 'CardStacks'>
+            <MiniCard title = "You've Retired" symbol = {Leaf} amount = {userRetired.toFixed(3)} subtitle = "Tons of Carbon Retired"/>
+            <MiniCard title = "You've Offset" symbol = {Leaf} amount = {userOffset} subtitle = "Total Offset Transactions"/>
+            <BreakdownCard logo = {BCTcircle} amount = {userRetired.toFixed(3)} subtitle = "BCT"/>
           </div>
         </div>
       </div>
     )
   }
 
-
   return (
     <div className="App">
-      <Sidebar address = {address}/>
+      {width > 1200 && <Sidebar address = {address}/>}
       <MainPanel/>
       {coinModalOpened && <CoinModal/>}
-      {approveModalOpened && <ApproveModal/>}
-      {burnModalOpened && <BurnModal/>}
+      {approveModalOpened && <ApproveModal setApproveModal= {setApproveModalOpened}/>}
+      {burnModalOpened && <BurnModal setBurnModal = {setBurnModalOpened}/>}
       {toastOpened && <Toast/>}
     </div>
   );

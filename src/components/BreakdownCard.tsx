@@ -1,8 +1,7 @@
 import Cloud from '../assets/cloud.png';
-import BCTcircle from '../assets/BCTcircle.png';
 import MCO2 from '../assets/MCO2.png';
 
-export function BreakdownCard() {
+export function BreakdownCard(props: {logo: any, amount: string, subtitle: string}) {
     function RetirementInfo(props: {logo: any, amount: string, subtitle: string}) {
       return (
         <div>
@@ -23,9 +22,9 @@ export function BreakdownCard() {
         <img style = {{marginRight: '11px', height: '30px', marginBottom: '5%'}} src = {Cloud} alt = "cloud"></img>
         <span style = {{verticalAlign: 'top'}}>Breakdown</span>
         <div>
-          <RetirementInfo logo = {BCTcircle} amount = '4.543' subtitle = 'BCT'/>
+          <RetirementInfo logo = {props.logo} amount = {props.amount} subtitle = {props.subtitle}/>
           <hr style = {{margin: '5% 0'}} />
-          <RetirementInfo logo = {MCO2} amount = '4.000' subtitle = 'MCO2'/>
+          <RetirementInfo logo = {MCO2} amount = '0.000' subtitle = 'MCO2'/>
         </div>
       </div>
     )

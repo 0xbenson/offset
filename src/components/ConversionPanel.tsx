@@ -20,9 +20,9 @@ export function ConversionPanel(props: {currentCoin: string}) {
       <div>
         <p className = "inputTitle">CONVERSION</p>
         <div style = {{display: 'flex', justifyContent: 'space-between'}}>
-          <CoinPanel coin = 'BCT' id = 'nbx'/>
+          <CoinPanel coin = 'BCT' id = 'BCTamount'/>
           <span style = {{paddingTop: '17px', fontSize: '30px'}}>⇆</span>
-          <CoinPanel coin = {props.currentCoin} id = 'BCTequivalent'/>
+          <CoinPanel coin = {props.currentCoin} id = 'convertedAmount'/>
         </div>
         <p/>
       </div>

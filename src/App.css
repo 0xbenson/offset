@@ -58,6 +58,12 @@ hr {
   width: calc(100% - 244px);
 }
 
+.MainBody {
+  height: 95%;
+  display: flex;
+  justify-content: space-between;
+}
+
 .ConnectButton {
   background-color: #00CC33;
   width: 120px;
@@ -232,9 +238,8 @@ input[type=number] {
 .BurnPanel {
   position: absolute;
   padding-top: 50px;
-  left: calc(50% - 200px);
-  width: 48%;
-  max-width: 401px;
+  left: calc(50% - 40%);
+  width: 80%
 }
 
 .MiniCard {
@@ -247,12 +252,6 @@ input[type=number] {
   font-weight: 600;
 }
 
-.MiniCard:hover {
-  animation: scaleup 0.15s ease-in-out;
-  z-index: 100;
-  animation-fill-mode: forwards;
-}
-
 .BreakdownCard {
   border-radius: 12px;
   background: #202020;
@@ -260,12 +259,6 @@ input[type=number] {
   text-align: left;
   font-size: 24px;
   font-weight: 600;
-}
-
-.BreakdownCard:hover {
-  animation: scaleup 0.15s ease-in-out;
-  z-index: 100;
-  animation-fill-mode: forwards;
 }
 
 .bigNumber {
@@ -425,7 +418,7 @@ input[type=number] {
     transform: scale(1);
   }
   100% {
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
 }
 
@@ -477,6 +470,12 @@ button:hover {
   animation-fill-mode: forwards;
 }
 
+.CardStacks {
+  flex-direction: column;
+  display: flex;
+  width: 30%;
+}
+
 @keyframes fadeDown {
   0% {
     opacity: 0;
@@ -489,6 +488,53 @@ button:hover {
   }
 }
 
-
-
-
+@media (max-width: 1200px) {
+  .App {
+    text-align: center;
+    background-color: #2B2B2B;
+    font-family: 'Inter', sans-serif;
+    width: auto;
+    min-height: none;
+    height: none;
+  }
+  .Main {
+    padding: 1%;
+    align-items: center;
+    width: calc(100% - 25px);
+  }
+  .MainBody {
+    height: 95%;
+    display: block;
+    justify-content: normal;
+  }
+  .MiniCard {
+    width: calc(100% - 50px);
+  }
+  .CardStacks {
+    flex-direction: column;
+    display: flex;
+    width: 100%;
+  }
+  .Card {
+    height: 800px;
+    width: calc(100% - 50px);
+    margin-bottom: 30px;
+    min-width: 0;
+  }
+  .BreakdownCard {
+    width: calc(100% - 50px);
+    margin-bottom: 30px;
+  }
+  .BurnPanel {
+    left: 10%;
+    width: 80%;
+    max-width: none;
+  }
+  .modalContainer {
+    width: 80vw; 
+  }
+  .selectCoinButton {
+    width: 80vw;
+  }
+  
+}
