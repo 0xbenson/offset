@@ -85,7 +85,6 @@ function App() {
   const [poolToken, setPoolToken] = useState(BCTcontractAddress);
   const [sourceToken, setSourceToken] = useState(USDCcontractAddress);
   const [currentCarbonType, setCurrentCarbonType] = useState('BCT');
-  const [multiplier, setMultiplier] = useState(0);
 
   useEffect(() => {
       window.addEventListener('resize', () => setWidth(window.innerWidth) );
@@ -93,15 +92,6 @@ function App() {
           window.removeEventListener('resize', () => setWidth(window.innerWidth) );
       }
   }, []);
-
-  useEffect(() => {
-    offsetConsumptionContract.methods.getSourceAmount(sourceToken, poolToken, '1', true).call(function(err: Error, res: number) {
-      if (err) {
-        return;
-      }
-      setMultiplier(res[0]);
-    });
-  })
 
   function CoinSelectButton(props: {title: string, openModal: (a: boolean) => void, coin: string}) {
     const logo = props.coin === 'BCT' ? BCTbox : props.coin === 'MCO2' ? MCO2box : props.coin === 'MCO2' ? MCO2box : props.coin === 'USDC' ? USDCbox : KLIMAbox
@@ -147,17 +137,24 @@ function App() {
         <input
           onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()}
           onChange = {(e) => {
-            (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (+e.target.value).toFixed(2);
-            (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = (multiplier*+e.target.value).toFixed(2).toString();
+            if (parseInt(e.target.value) === 0 || e.target.value === '') {
+              (document.getElementById('BCTamount') as HTMLSpanElement).textContent = '0.00';
+              (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = '0.00';
+              return;
+            }
+            offsetConsumptionContract.methods.getSourceAmount(sourceToken, poolToken, BigInt(e.target.value*10**18).toString(), true).call(function(err: Error, res: number) {
+              if (err) {
+                return;
+              }
+              (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (+e.target.value).toFixed(2);
+              (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = (res[0]/(10**18)).toFixed(2).toString();
+            });
           }}
           id = 'amount'
           type="number"
           placeholder="How many carbon tons would you like to retire?"
         />
         <button onClick = {() => {
-          // (document.getElementById('amount') as HTMLInputElement).value = (currentCoinBalance()/multiplier).toFixed(5);
-          // (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (currentCoinBalance()/multiplier).toFixed(2);
-          // (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2);
           if (sourceToken === poolToken) {
             (document.getElementById('amount') as HTMLInputElement).value = (currentCoinBalance()*0.99).toFixed(5)
             return;
@@ -168,6 +165,8 @@ function App() {
               return;
             }
             (document.getElementById('amount') as HTMLInputElement).value = (res[1]/(10**18)*0.99).toFixed(5);
+              (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (res[1]/(10**18)*0.99).toFixed(2);
+              (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2);
           });
         }}
         className = 'Max'>
