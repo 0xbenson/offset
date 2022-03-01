@@ -104,7 +104,6 @@ hr {
   border-radius: 6px;
 }
 
-
 .Card {
   border-radius: 12px;
   background: #202020;
@@ -115,6 +114,19 @@ hr {
   width: 85%;
   margin-right: 24px;
   min-width: 450px;
+}
+
+.loading {
+  padding-bottom: 20px;
+  padding-left: 85px;
+  position: relative;
+}
+
+.loadingSymbol {
+  padding-left: 75px;
+  padding-top: 68px;
+  position: absolute;
+  height: 60px;
 }
 
 .CardTitle {
@@ -131,18 +143,32 @@ hr {
   padding-top: 10px;
 }
 
+.KLIMAbutton {
+  background-color: transparent;
+  border: none;
+  padding-bottom: 10px;
+  display: flex;
+}
+
+.CardSymbol {
+  margin-right: 11px;
+  height: 30px;
+}
+
 .Conversion {
   background-color: #2B2B2B;
   height: 60px;
   box-sizing: border-box;
   border: none;
   border-radius: 8px;
-  padding-right: 23px;
+  padding-right: 10px;
   display: flex;
   font-size: 17px;
   font-weight: 500;
   justify-content: space-between;
   margin-top: 8px;
+  align-items: center;
+  padding-left: 7px;
 }
 
 .burn {
@@ -237,9 +263,9 @@ input[type=number] {
 
 .BurnPanel {
   position: absolute;
-  padding-top: 50px;
-  left: calc(50% - 40%);
-  width: 80%
+  top: calc(50% - 305px);
+  left: calc(50% - 32.5%);
+  width: 65%
 }
 
 .MiniCard {
@@ -286,7 +312,7 @@ input[type=number] {
 
 .modalContainer {
   width: 400px;
-  height: 450px;
+  height: fit-content;
   border-radius: 12px;
   background-color: #303030;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -299,6 +325,12 @@ input[type=number] {
   animation-fill-mode: forwards;
 }
 
+.modalHeader {
+  padding-bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
 
 @keyframes enter{
   0% { 
@@ -334,6 +366,19 @@ input[type=number] {
   border: none;
   font-size: 16px;
   text-align: center;
+}
+
+.coinBox {
+  width: 48px;
+  height: 48px;
+  padding-right: 7px;
+}
+
+.infoPair {
+  width: fit-content;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
 }
 
 .selectCoinButton {
@@ -516,7 +561,7 @@ button:hover {
     width: 100%;
   }
   .Card {
-    height: 800px;
+    height: 850px;
     width: calc(100% - 50px);
     margin-bottom: 30px;
     min-width: 0;
@@ -532,9 +577,11 @@ button:hover {
   }
   .modalContainer {
     width: 80vw; 
+    max-width: 400px;
   }
   .selectCoinButton {
     width: 80vw;
+    max-width: 400px;
   }
   
 }

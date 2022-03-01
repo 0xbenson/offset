@@ -1,8 +1,7 @@
 import Cloud from '../assets/cloud.png';
-import MCO2 from '../assets/MCO2.png';
 
-export function BreakdownCard(props: {logo: any, amount: string, subtitle: string}) {
-    function RetirementInfo(props: {logo: any, amount: string, subtitle: string}) {
+export function BreakdownCard(props: {carbonTypes: {logo: string, amount: number, subtitle: string}[]}) {
+    function RetirementInfo(props: {logo: string, amount: string, subtitle: string}) {
       return (
         <div>
           <p style = {{fontSize: '14px', fontWeight: '400'}}>Retired</p>
@@ -16,15 +15,19 @@ export function BreakdownCard(props: {logo: any, amount: string, subtitle: strin
         </div>
       )
     }
+    const carbonTypesList = props.carbonTypes.map((item, index) => (
+      <div>
+        <RetirementInfo logo = {item.logo} amount = {item.amount.toFixed(3)} subtitle = {item.subtitle}/>
+        {index < props.carbonTypes.length - 1 && <hr style = {{margin: '5% 0'}} />}
+      </div>
+    ));
 
     return (
       <div className = 'BreakdownCard'>
-        <img style = {{marginRight: '11px', height: '30px', marginBottom: '5%'}} src = {Cloud} alt = "cloud"></img>
+        <img className = 'CardSymbol' src = {Cloud} alt = "cloud"></img>
         <span style = {{verticalAlign: 'top'}}>Breakdown</span>
         <div>
-          <RetirementInfo logo = {props.logo} amount = {props.amount} subtitle = {props.subtitle}/>
-          <hr style = {{margin: '5% 0'}} />
-          <RetirementInfo logo = {MCO2} amount = '0.000' subtitle = 'MCO2'/>
+          {carbonTypesList}
         </div>
       </div>
     )

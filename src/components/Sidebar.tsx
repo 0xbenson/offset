@@ -4,7 +4,7 @@ export function Sidebar(props: {address: string}) {
     return (
       <div className="Sidebar">
         <a rel="noreferrer" target="_blank" style = {{textDecoration: 'none'}} href="http://www.klimadao.finance/">
-          <button style = {{backgroundColor: 'transparent', border: 'none', paddingBottom: '10px', display: 'flex'}} >
+          <button className = 'KLIMAbutton' >
             <img src={KLIMAlogo} alt="KLIMA" className = "Logo"/>
             <header className = "LogoFont">
               KlimaDAO
