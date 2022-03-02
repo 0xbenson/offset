@@ -16,7 +16,7 @@ export function BreakdownCard(props: {carbonTypes: {logo: string, amount: number
       )
     }
     const carbonTypesList = props.carbonTypes.map((item, index) => (
-      <div>
+      <div key = {index}>
         <RetirementInfo logo = {item.logo} amount = {item.amount.toFixed(3)} subtitle = {item.subtitle}/>
         {index < props.carbonTypes.length - 1 && <hr style = {{margin: '5% 0'}} />}
       </div>

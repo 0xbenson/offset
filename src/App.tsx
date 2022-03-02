@@ -55,6 +55,7 @@ import { errorBurn } from './utils/errorBurn';
 import { successfulBurn } from './utils/successfulBurn';
 import { successfulApprove } from './utils/successfulApprove';
 import { errorApprove } from './utils/errorApprove';
+import { multiplier } from './utils/multiplier';
 
 function App() {
   const [address, setAddress] = useState('NOT CONNECTED');
@@ -137,7 +138,7 @@ function App() {
         <input
           onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()}
           onChange = {(e) => {
-            if (parseInt(e.target.value) === 0 || e.target.value === '') {
+            if (parseFloat(e.target.value) === 0 || e.target.value === '') {
               (document.getElementById('BCTamount') as HTMLSpanElement).textContent = '0.00';
               (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = '0.00';
               return;
@@ -147,7 +148,7 @@ function App() {
                 return;
               }
               (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (+e.target.value).toFixed(2);
-              (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = (res[0]/(10**18)).toFixed(2).toString();
+              (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = (res[0]/(10**multiplier(currentCoin))).toFixed(2).toString();
             });
           }}
           id = 'amount'
@@ -161,19 +162,19 @@ function App() {
                 return;
               }
               (document.getElementById('amount') as HTMLInputElement).value = (res[1]/(10**18)*0.99).toFixed(5);
-                (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (res[1]/(10**18)*0.99).toFixed(2);
-                (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2);
+              (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (res[1]/(10**18)*0.99).toFixed(2);
+              (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2);
             });
             return;
           }
 
-          offsetConsumptionContract.methods.getSourceAmount(sourceToken, poolToken, BigInt(currentCoinBalance()*10**18).toString(), false).call(function(err: Error, res: number) {
+          offsetConsumptionContract.methods.getSourceAmount(sourceToken, poolToken, BigInt(currentCoinBalance()*10**multiplier(currentCoin)).toString(), false).call(function(err: Error, res: number) {
             if (err) {
               return;
             }
             (document.getElementById('amount') as HTMLInputElement).value = (res[1]/(10**18)*0.99).toFixed(5);
-              (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (res[1]/(10**18)*0.99).toFixed(2);
-              (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2);
+            (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (res[1]/(10**18)*0.99).toFixed(2);
+            (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2);
           });
         }}
         className = 'Max'>
@@ -318,7 +319,7 @@ function App() {
         if (err) {
           return;
         }
-        setUSDCbalance(res/(10**18));
+        setUSDCbalance(res/(10**6));
       });
 
       MCO2contract.methods.balanceOf(accounts[0]).call(function (err: Error, res: number) {
@@ -349,8 +350,6 @@ function App() {
         }
         setMCO2retired(res/(10**18));
       });
-
-      
     }
   }
 
@@ -392,7 +391,6 @@ function App() {
       successfulBurn();
       setTimeout(() => setBurnModalOpened(false), 2000);
     }).catch((err: Error) => {
-      console.log(err);
       errorBurn();
       setTimeout(() => setBurnModalOpened(false), 2000);
     });
