@@ -156,7 +156,14 @@ function App() {
         />
         <button onClick = {() => {
           if (sourceToken === poolToken) {
-            (document.getElementById('amount') as HTMLInputElement).value = (currentCoinBalance()*0.99).toFixed(5)
+            offsetConsumptionContract.methods.getSourceAmount(sourceToken, poolToken, BigInt(currentCoinBalance()*10**18).toString(), true).call(function(err: Error, res: number) {
+              if (err) {
+                return;
+              }
+              (document.getElementById('amount') as HTMLInputElement).value = (res[1]/(10**18)*0.99).toFixed(5);
+                (document.getElementById('BCTamount') as HTMLSpanElement).textContent = (res[1]/(10**18)*0.99).toFixed(2);
+                (document.getElementById('convertedAmount') as HTMLSpanElement).textContent = currentCoinBalance().toFixed(2);
+            });
             return;
           }
 

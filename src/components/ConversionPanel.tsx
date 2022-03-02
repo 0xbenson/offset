@@ -17,7 +17,10 @@ export function ConversionPanel(props: {currentCoin: string, currentCarbonType: 
 
   return (
     <div>
-      <p className = "inputTitle">CONVERSION</p>
+      <div className = 'Seperate'>
+        <p className = "inputTitle">BURNING</p>
+        <p className = "inputTitle">COST</p>
+      </div>
       <div style = {{display: 'flex', justifyContent: 'space-between'}}>
         <CoinPanel logo = {carbonLogo} coin = {props.currentCarbonType} id = 'BCTamount'/>
         <span style = {{paddingTop: '17px', fontSize: '30px'}}>⇆</span>
