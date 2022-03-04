@@ -1,22 +1,37 @@
-import Fire from '../assets/fire.png';
-import PendingApproval from '../assets/approving.png'
+import Fire from "../assets/fire.png";
+import PendingApproval from "../assets/approving.png";
 
-export function BurnModal(props: {setBurnModal: (a: boolean) => void}) {
-    return (
-      <div onClick = {() => {props.setBurnModal(false); }} className = 'modalBackground'>
-        <div className = 'modalContainer'>
-          <div className = 'modalHeader'>
-            <span className = 'CardTitle'>Burn</span>
-            <button className = 'modalClose' onClick = {() => props.setBurnModal(false)}>&times;</button>
-          </div>
-          <div className = 'loading'>
-            <img id = 'burnSymbol' className = 'loadingSymbol' src = {Fire} alt = ""/>
-            <img id = "approvalpic" className = "Approving" src = {PendingApproval} alt = "approving"/>
-          </div>
-          <p id = 'approvingStatus' style = {{margin: 'auto'}}>
-            Burning...
-          </p>
+export function BurnModal(props: { setBurnModal: (a: boolean) => void }) {
+  return (
+    <div
+      onClick={() => {
+        props.setBurnModal(false);
+      }}
+      className="modal-background"
+    >
+      <div className="modal-container">
+        <div className="modal-header">
+          <span className="card-title">Burn</span>
+          <button
+            className="modal-close"
+            onClick={() => props.setBurnModal(false)}
+          >
+            &times;
+          </button>
         </div>
+        <div className="loading">
+          <img id="burnSymbol" className="loading-symbol" src={Fire} alt="" />
+          <img
+            id="approvalpic"
+            className="approving"
+            src={PendingApproval}
+            alt="approving"
+          />
+        </div>
+        <p id="approvingStatus" style={{ margin: "auto" }}>
+          Burning...
+        </p>
       </div>
-    )
-  }
+    </div>
+  );
+}
