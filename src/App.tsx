@@ -209,7 +209,7 @@ function App() {
           onKeyDown={(evt) =>
             ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()
           }
-          onChange={(e) => {
+          onChange={(e: any) => {
             if (parseFloat(e.target.value) === 0 || e.target.value === "") {
               (
                 document.getElementById("BCTamount") as HTMLSpanElement
@@ -340,7 +340,7 @@ function App() {
     );
   }
 
-  async function connect() {
+  async function connect(): Promise<any> {
     if (active) {
       setAddress("NOT CONNECTED");
       setActive(false);
@@ -542,7 +542,7 @@ function App() {
     }
   }
 
-  async function approveCoin(coin: string) {
+  async function approveCoin(coin: string): Promise<any> {
     setApproveModalOpened(true);
     const con: [string, any] =
       coin === "BCT"
@@ -583,7 +583,7 @@ function App() {
     beneficiaryAddress: string,
     beneficiary: string,
     retirementMessage: string
-  ) {
+  ): Promise<any> {
     if (beneficiaryAddress === "") {
       beneficiaryAddress = address;
     } else if (!web3.utils.isAddress(beneficiaryAddress)) {
@@ -624,7 +624,7 @@ function App() {
       });
   }
 
-  function currentCoinBalance() {
+  function currentCoinBalance(): number {
     return currentCoin === "BCT"
       ? BCTbalance
       : currentCoin === "NCT"
@@ -640,7 +640,7 @@ function App() {
       : wsKLIMAbalance;
   }
 
-  function currentCoinApproved() {
+  function currentCoinApproved(): boolean {
     return currentCoin === "BCT"
       ? BCTapproved
       : currentCoin === "NCT"
@@ -727,7 +727,7 @@ function App() {
               carbonTypes={[
                 { logo: BCTcircle, amount: BCTretired, subtitle: "BCT" },
                 { logo: NCTcircle, amount: NCTretired, subtitle: "NCT" },
-                { logo: MCO2circle, amount: MCO2retired, subtitle: "MCO2" }
+                { logo: MCO2circle, amount: MCO2retired, subtitle: "MCO2" },
               ]}
             />
           </div>

@@ -45,7 +45,7 @@ export function ConversionPanel(props: {
           coin={props.currentCoin}
           id="convertedAmount"
         />
-        <span tooltip = "This cost includes slippage and the aggregation fee of 1%." className="arrow">→</span>
+        <span data-tooltip = "This cost includes slippage and the aggregation fee of 1%." className="arrow">→</span>
         <CoinPanel
           logo={carbonLogo}
           coin={props.currentCarbonType}
